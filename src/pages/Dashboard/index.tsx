@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { Image, ScrollView } from 'react-native';
 
 import Icon from 'react-native-vector-icons/Feather';
@@ -53,13 +53,25 @@ const Dashboard: React.FC = () => {
 
   const navigation = useNavigation();
 
-  async function handleNavigate(id: number): Promise<void> {
-    // Navigate do ProductDetails page
-  }
+  const handleNavigate = useCallback(
+    (id: number) => {
+      navigation.navigate('FoodDetails', { id });
+    },
+    [navigation],
+  );
 
   useEffect(() => {
     async function loadFoods(): Promise<void> {
-      // Load Foods from API
+      const { data } = await api.get('/foods');
+
+      const foodsWithFormattedPrice = data.map(
+        (food: Omit<Food, 'formattedPrice'>) => ({
+          ...food,
+          formattedPrice: formatValue(food.price),
+        }),
+      );
+
+      setFoods(foodsWithFormattedPrice);
     }
 
     loadFoods();
@@ -67,15 +79,17 @@ const Dashboard: React.FC = () => {
 
   useEffect(() => {
     async function loadCategories(): Promise<void> {
-      // Load categories from API
+      const { data } = await api.get('/categories');
+
+      setCategories(data);
     }
 
     loadCategories();
   }, []);
 
-  function handleSelectCategory(id: number): void {
-    // Select / deselect category
-  }
+  const handleSelectCategory = useCallback((id: number) => {
+    setSelectedCategory(id);
+  }, []);
 
   return (
     <Container>
