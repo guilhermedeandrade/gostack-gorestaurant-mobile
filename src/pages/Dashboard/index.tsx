@@ -92,9 +92,14 @@ const Dashboard: React.FC = () => {
     loadCategories();
   }, []);
 
-  const handleSelectCategory = useCallback((id: number) => {
-    setSelectedCategory(id);
-  }, []);
+  const handleSelectCategory = useCallback(
+    (id: number) => {
+      selectedCategory === id
+        ? setSelectedCategory(undefined)
+        : setSelectedCategory(id);
+    },
+    [selectedCategory],
+  );
 
   return (
     <Container>
